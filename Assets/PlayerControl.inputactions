@@ -60,6 +60,50 @@
                 },
                 {
                     "name": "",
+                    "id": "3b510b44-185c-468f-9ab2-64bee322f3c3",
+                    "path": "<Gamepad>/leftStick/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveX",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "dc82348c-b518-4cde-ae45-b34311f55088",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveX",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "1a335ea9-5497-4956-aa66-815c299e6a15",
+                    "path": "<Gamepad>/dpad/left",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveX",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "caef94cc-507a-44c2-995f-8a2c1383446f",
+                    "path": "<Gamepad>/dpad/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveX",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
                     "id": "083064a2-1601-447b-a5be-e7b227532fe9",
                     "path": "<Keyboard>/space",
                     "interactions": "Press",
@@ -74,6 +118,17 @@
                     "id": "132b876b-d294-4ec1-bae0-f1c28b71282a",
                     "path": "<Keyboard>/w",
                     "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b4148f43-1514-457d-82dd-ccdee7565d49",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Jump",
