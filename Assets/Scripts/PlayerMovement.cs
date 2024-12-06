@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _isGrounded;
 
     private Rigidbody2D _rigidbody;
+    private float _rbGravity;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -19,6 +23,8 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.LogWarning("No rigidbody attached");
         }
+
+        _rbGravity = _rigidbody.gravityScale;
     }
 
     // Update is called once per frame
@@ -32,12 +38,13 @@ public class PlayerMovement : MonoBehaviour
             {
                 _rigidbody.AddRelativeForce(transform.up * jumpForce, ForceMode2D.Impulse);
             }
+
             _jumpInput = false;
         }
-        
+
         //Left - Right Movement
         _rigidbody.AddRelativeForce(transform.right * (moveForce * _horizontalInput), ForceMode2D.Force);
-        
+
         //Flip the sprite the way it moves
         if (_horizontalInput > 0)
         {
@@ -61,6 +68,13 @@ public class PlayerMovement : MonoBehaviour
         _jumpInput = value.isPressed;
     }
 
+    void OnJumpRelease(InputValue value)
+    {
+        Debug.Log("OnJumpRelease");
+        //Half upward velocity on jump button release
+        _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, _rigidbody.linearVelocity.y * 0.5f);
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Ground"))
@@ -68,12 +82,23 @@ public class PlayerMovement : MonoBehaviour
             _isGrounded = true;
         }
     }
-    
+
     void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Ground"))
         {
-            _isGrounded = false;
+            StartCoroutine(nameof(CoyoteTime));
         }
     }
+
+    IEnumerator CoyoteTime()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.15f);
+            _isGrounded = false;
+            StopCoroutine(nameof(CoyoteTime));
+        }
+    }
+
 }

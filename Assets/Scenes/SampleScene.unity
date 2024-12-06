@@ -9245,10 +9245,10 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 3.5
+  m_LinearDamping: 2
   m_AngularDamping: 0.05
   m_GravityScale: 6
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 744d4197aa63d0b42b2f5515ddf85de8, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -9384,8 +9384,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b44d7a58451b6d4eb55de7bde025389, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForce: 24
-  moveForce: 6
+  jumpForce: 23
+  moveForce: 4
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
