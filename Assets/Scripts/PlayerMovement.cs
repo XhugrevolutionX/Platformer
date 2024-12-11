@@ -1,21 +1,18 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float jumpForce;
-    [SerializeField] private float moveForce;
+    [SerializeField] private float jumpForce = 10;
+    [SerializeField] private float moveForce = 10;
     private float _horizontalInput;
     private bool _jumpInput;
     private bool _isGrounded;
 
+    private Coroutine _coyoteTime;
     private Rigidbody2D _rigidbody;
-    private float _rbGravity;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -23,82 +20,154 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.LogWarning("No rigidbody attached");
         }
-
-        _rbGravity = _rigidbody.gravityScale;
     }
 
-    // Update is called once per frame
     void Update()
+    {
+        //Flip the sprite the way it moves
+        if (_horizontalInput > 0)
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+        else if (_horizontalInput < 0)
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
+    }
+
+    void FixedUpdate()
     {
         //Jump
         if (_jumpInput)
         {
-            //Check if grounded
             if (_isGrounded)
             {
-                _rigidbody.AddRelativeForce(transform.up * jumpForce, ForceMode2D.Impulse);
+                _rigidbody.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
+                _isGrounded = false;
             }
 
             _jumpInput = false;
         }
 
         //Left - Right Movement
-        _rigidbody.AddRelativeForce(transform.right * (moveForce * _horizontalInput), ForceMode2D.Force);
+        _rigidbody.AddForce(transform.right * (moveForce * _horizontalInput), ForceMode2D.Force);
+    }
 
-        //Flip the sprite the way it moves
-        if (_horizontalInput > 0)
+    // //Old Input 
+    // void OnMoveX(InputValue value)
+    // {
+    //     Debug.Log("OnMove");
+    //     if (value.Get<float>() > 0)
+    //     {
+    //         _horizontalInput = 1;
+    //     }
+    //     else if (value.Get<float>() < 0)
+    //     {
+    //         _horizontalInput = -1;
+    //     }
+    //     else
+    //     {
+    //         _horizontalInput = 0;
+    //     }
+    // }
+    //
+    // void OnJump(InputValue value)
+    // {
+    //     Debug.Log("OnJump");
+    //     _jumpInput = value.isPressed;
+    // }
+    //
+    // void OnJumpRelease(InputValue value)
+    // {
+    //     Debug.Log("OnJumpRelease");
+    //     //Half upward velocity on jump button release
+    //     _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, _rigidbody.linearVelocity.y * 0.5f);
+    // }
+    //
+    // void OnShoot(InputValue value)
+    // {
+    //     Debug.Log("OnShoot");
+    //     return;
+    // }
+
+    //New Input
+
+    public void OnMoveXEvent(InputAction.CallbackContext context)
+    {
+        Debug.Log("Event OnMove");
+        if (context.ReadValue<float>() > 0)
         {
-            transform.localScale = new Vector3(-0.75f, 0.75f, 0.75f);
+            _horizontalInput = 1;
         }
-        else if (_horizontalInput < 0)
+        else if (context.ReadValue<float>() < 0)
         {
-            transform.localScale = new Vector3(0.75f, 0.75f, 0.75f);
+            _horizontalInput = -1;
+        }
+        else
+        {
+            _horizontalInput = 0;
         }
     }
 
-    void OnMoveX(InputValue value)
+    public void OnJumpEvent(InputAction.CallbackContext context)
     {
-        Debug.Log("OnMove");
-        _horizontalInput = value.Get<float>();
+        if (context.started)
+        {
+            Debug.Log("Event OnJump");
+            //Check if grounded
+            if (_isGrounded)
+            {
+                _jumpInput = true;
+            }
+        }
+
+        if (context.canceled)
+        {
+            Debug.Log("Event OnJumpRelease");
+            //Half upward velocity on jump button release
+            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, _rigidbody.linearVelocity.y * 0.5f);
+        }
     }
 
-    void OnJump(InputValue value)
+    public void OnShootEvent(InputAction.CallbackContext context)
     {
-        Debug.Log("OnJump");
-        _jumpInput = value.isPressed;
+        Debug.Log("Event OnShoot");
+        return;
     }
 
-    void OnJumpRelease(InputValue value)
-    {
-        Debug.Log("OnJumpRelease");
-        //Half upward velocity on jump button release
-        _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, _rigidbody.linearVelocity.y * 0.5f);
-    }
 
-    void OnTriggerEnter2D(Collider2D other)
+    //Grounded Trigger
+    public void OnTriggerStay2D(Collider2D other)
     {
         if (other.CompareTag("Ground"))
         {
             _isGrounded = true;
+            _jumpInput = false;
         }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Ground"))
+        if (_jumpInput)
         {
-            StartCoroutine(nameof(CoyoteTime));
+            _isGrounded = false;
+        }
+        else
+        {
+            if (_coyoteTime != null)
+            {
+                StopCoroutine(_coyoteTime);
+            }
+
+            _coyoteTime = StartCoroutine("CoyoteTime");
         }
     }
 
+
+    //Coyote Time
     IEnumerator CoyoteTime()
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(0.15f);
-            _isGrounded = false;
-            StopCoroutine(nameof(CoyoteTime));
-        }
+        yield return new WaitForSeconds(0.15f);
+        _isGrounded = false;
     }
-
 }
