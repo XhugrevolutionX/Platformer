@@ -42,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (_isGrounded)
             {
+                Debug.Log("JumpForce Applied");
                 _rigidbody.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
                 _isGrounded = false;
             }
@@ -125,7 +126,10 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.Log("Event OnJumpRelease");
             //Half upward velocity on jump button release
-            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, _rigidbody.linearVelocity.y * 0.5f);
+             if (_rigidbody.linearVelocityY > 0)
+            {
+                _rigidbody.linearVelocityY *= 0.5f;
+            }
         }
     }
 
