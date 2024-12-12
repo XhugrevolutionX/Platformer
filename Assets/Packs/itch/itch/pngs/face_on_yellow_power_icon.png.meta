@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      face_on_yellow_power_icon_0: -5939644296406043521
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

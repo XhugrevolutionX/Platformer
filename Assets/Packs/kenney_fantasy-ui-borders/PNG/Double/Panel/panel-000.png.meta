@@ -49,7 +49,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -116,12 +116,12 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 83
-        width: 13
-        height: 13
+        y: 0
+        width: 96
+        height: 96
       alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 25, y: 25, z: 25, w: 25}
       customData: 
       outline: []
       physicsShape: []
@@ -142,7 +142,7 @@ TextureImporter:
         width: 90
         height: 90
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -164,7 +164,7 @@ TextureImporter:
         width: 13
         height: 13
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -186,7 +186,7 @@ TextureImporter:
         width: 13
         height: 13
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -208,7 +208,7 @@ TextureImporter:
         width: 13
         height: 13
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -225,7 +225,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 834dfc3ff4e0edb42b49c7c556795230
     internalID: 0
     vertices: []
     indices: 
@@ -234,7 +234,12 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      panel-000_0: 8601233621574466027
+      panel-000_1: 6396526287792569226
+      panel-000_2: 4437801263518235539
+      panel-000_3: 2533069573107601531
+      panel-000_4: -6946186545773076095
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

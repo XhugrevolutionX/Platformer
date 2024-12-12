@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      faceon_gold_coin_0: -6150527139465018232
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

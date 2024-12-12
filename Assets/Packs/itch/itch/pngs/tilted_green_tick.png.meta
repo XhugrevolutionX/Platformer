@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      tilted_green_tick_0: -6474155614214917245
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

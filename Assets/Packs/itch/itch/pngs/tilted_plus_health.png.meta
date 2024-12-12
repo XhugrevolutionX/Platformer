@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      tilted_plus_health_0: -1041032313621786943
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

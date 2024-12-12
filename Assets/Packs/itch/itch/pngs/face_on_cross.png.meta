@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      face_on_cross_0: -1329841248041668906
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

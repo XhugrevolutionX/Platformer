@@ -12,10 +12,12 @@ public class PlayerMovement : MonoBehaviour
 
     private Coroutine _coyoteTime;
     private Rigidbody2D _rigidbody;
+    private PlayerInput _playerInput;
 
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
+        _playerInput = GetComponent<PlayerInput>();
         if (_rigidbody == null)
         {
             Debug.LogWarning("No rigidbody attached");
@@ -167,6 +169,10 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void DisableInput()
+    {
+        _playerInput.enabled = false;
+    }
 
     //Coyote Time
     IEnumerator CoyoteTime()

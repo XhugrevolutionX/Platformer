@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      tilted_cross_0: 790627761240454680
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

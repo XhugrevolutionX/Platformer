@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      face_on_green_tick_0: -1256911990392212965
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

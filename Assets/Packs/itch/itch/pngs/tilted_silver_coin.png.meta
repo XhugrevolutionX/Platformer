@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      tilted_silver_coin_0: 5907650220978360059
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

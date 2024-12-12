@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      tilted_heart_0: 4972256247087092432
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      tilted_blue_power_icon_0: -778024424329989018
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

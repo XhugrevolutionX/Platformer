@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      face_on_plus_health_0: 1025567050502754584
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
