@@ -1,15 +1,15 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
+
 public class Item : MonoBehaviour
 {
-
     public event Action<Item> OnPicked;
     void Start()
     {
         Activate();
     }
     
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
