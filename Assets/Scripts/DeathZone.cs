@@ -7,7 +7,7 @@ public class DeathZone : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Debug.Log("Player Death");
-            other.transform.position = new Vector3(0, -1.25f, 0);
+            other.transform.position = other.GetComponent<PlayerSpawn>().SpawnPosition;
         }
     }
 }
