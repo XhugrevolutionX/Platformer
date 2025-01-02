@@ -114,6 +114,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnJumpEvent(InputAction.CallbackContext context)
     {
+        //Variable jump height
         if (context.started)
         {
             Debug.Log("Event OnJump");
