@@ -17,12 +17,13 @@ public class Game : MonoBehaviour
     
     public void RestartGame()
     {
-        _player.transform.position = new Vector3(0f, -1.25f, 0f);
-        _rb.linearVelocity = Vector3.zero;
-        _playerInput.enabled = true;
-        
-        //Reset / Spawn Diamonds
-        
         Time.timeScale = 1f;
+        SceneManager.LoadScene(0);
+        Canvas.ForceUpdateCanvases();
+        // _player.transform.position = new Vector3(-100f, -1f, -10f);
+        // _rb.linearVelocity = Vector3.zero;
+        // _playerInput.enabled = true;
+        //
+        // //Reset / Spawn Diamonds
     }
 }

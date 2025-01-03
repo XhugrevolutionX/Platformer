@@ -161,12 +161,15 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            if (_coyoteTime != null)
+            if (isActiveAndEnabled)
             {
-                StopCoroutine(_coyoteTime);
-            }
+                if (_coyoteTime != null)
+                {
+                    StopCoroutine(_coyoteTime);
+                }
 
-            _coyoteTime = StartCoroutine("CoyoteTime");
+                _coyoteTime = StartCoroutine("CoyoteTime");
+            }
         }
     }
 
