@@ -174,7 +174,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            if (isActiveAndEnabled)
+            if (gameObject.activeInHierarchy)
             {
                 if (_coyoteTime != null)
                 {
