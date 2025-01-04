@@ -6,6 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float jumpForce = 10;
     [SerializeField] private float moveForce = 10;
+    [SerializeField] private Animator animator;
     private float _horizontalInput;
     private bool _jumpInput;
     private bool _isGrounded;
@@ -22,6 +23,8 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.LogWarning("No rigidbody attached");
         }
+        
+        animator.SetBool("Is_idle", true);
     }
 
     void Update()
@@ -35,6 +38,12 @@ public class PlayerMovement : MonoBehaviour
         {
             transform.localScale = new Vector3(-1, 1, 1);
         }
+        
+        //animations
+        animator.SetBool("Is_idle", _isGrounded && _rigidbody.linearVelocityX == 0);
+        animator.SetBool("Is_running", _isGrounded && _rigidbody.linearVelocityX != 0);
+        animator.SetBool("Is_jumping", !_isGrounded && _rigidbody.linearVelocityY > 0);
+        animator.SetBool("Is_falling", !_isGrounded && _rigidbody.linearVelocityY < 0);
     }
 
     void FixedUpdate()
@@ -52,8 +61,12 @@ public class PlayerMovement : MonoBehaviour
             _jumpInput = false;
         }
 
-        //Left - Right Movement
-        _rigidbody.AddForce(transform.right * (moveForce * _horizontalInput), ForceMode2D.Force);
+        if (_horizontalInput != 0)
+        {
+            //Left - Right Movement
+            _rigidbody.AddForce(transform.right * (moveForce * _horizontalInput), ForceMode2D.Force);
+        }
+
     }
 
     // //Old Input 
