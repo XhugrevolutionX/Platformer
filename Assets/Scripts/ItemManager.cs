@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -7,22 +6,42 @@ using UnityEngine.UI;
 public class ItemManager : MonoBehaviour
 {
     
-    [SerializeField] private UnityEvent allItemsPickedUp;
-    [SerializeField] private GameObject diamondCounter;
-    private int _diamondPickedUp;
+    [SerializeField] private UnityEvent allDiamondsPickedUp;
+    [SerializeField] private GameObject diamondsCounter;
+    [SerializeField] private GameObject cherriesCounter;
+    private int _diamondsPickedUp;
+    private int _cherriesPickedUp;
     
-    private List<Item> _itemsToPick = new List<Item>();
+    private List<Item> _diamondsToPick = new List<Item>();
+    private List<Item> _cherriesToPick = new List<Item>();
     void Start()
     {
-        _diamondPickedUp = 0;
+        _diamondsPickedUp = 0;
+        _cherriesPickedUp = 0;
         LoadItems();
     }
     public void LoadItems()
     {
         Item[] itemsArray = GetComponentsInChildren<Item>();
-        _itemsToPick = new List<Item>(itemsArray);
 
-        foreach (Item item in _itemsToPick)
+        foreach (Item item in itemsArray)
+        {
+            if (item.CompareTag("Diamond"))
+            {
+                _diamondsToPick.Add(item);
+            }
+            else if (item.CompareTag("Cherry"))
+            {
+                _cherriesToPick.Add(item);
+            }
+        }
+
+        foreach (Item item in _diamondsToPick)
+        {
+            item.Activate();
+            item.OnPicked += RemoveItem;
+        }
+        foreach (Item item in _cherriesToPick)
         {
             item.Activate();
             item.OnPicked += RemoveItem;
@@ -33,14 +52,23 @@ public class ItemManager : MonoBehaviour
     {
         Debug.Log("Removing item");
         itemToRemove.OnPicked -= RemoveItem;
-        _itemsToPick.Remove(itemToRemove);
-        _diamondPickedUp++;
         
-        diamondCounter.GetComponent<Text>().text = "X " + _diamondPickedUp;
-        
-        if (_itemsToPick.Count == 0)
+        if (itemToRemove.CompareTag("Diamond"))
         {
-            allItemsPickedUp?.Invoke();
+            _diamondsToPick.Remove(itemToRemove);
+            _diamondsPickedUp++;
+            diamondsCounter.GetComponent<Text>().text = "X " + _diamondsPickedUp;
+        }
+        else if (itemToRemove.CompareTag("Cherry"))
+        {
+            _cherriesToPick.Remove(itemToRemove);
+            _cherriesPickedUp++;
+            cherriesCounter.GetComponent<Text>().text = "X " + _cherriesPickedUp;
+        }
+        
+        if (_diamondsToPick.Count == 0)
+        {
+            allDiamondsPickedUp?.Invoke();
         }
     }
 }

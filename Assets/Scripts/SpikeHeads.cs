@@ -19,7 +19,7 @@ public class SpikeHeadAnimation : MonoBehaviour
     {
         if (animator.GetBool("Is_rushing"))
         {
-            transform.localPosition += Vector3.down * (Time.deltaTime * 5f);
+            transform.localPosition += Vector3.down * (Time.deltaTime * 6f);
         }
         else if(transform.localPosition.y < originalPosition.y)
         {
