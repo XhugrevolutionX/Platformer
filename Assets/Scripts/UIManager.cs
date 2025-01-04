@@ -17,7 +17,4 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 0f;
         _goodGameText.SetActive(true);
     }
-
-
-    
 }

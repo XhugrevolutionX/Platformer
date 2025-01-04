@@ -149,11 +149,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    public void OnShootEvent(InputAction.CallbackContext context)
-    {
-        Debug.Log("Event OnShoot");
-        return;
-    }
+    // public void OnShootEvent(InputAction.CallbackContext context)
+    // {
+    //     Debug.Log("Event OnShoot");
+    //     return;
+    // }
 
 
     //Grounded Trigger
@@ -186,15 +186,16 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    public void DisableInput()
-    {
-        _playerInput.enabled = false;
-    }
-
     //Coyote Time
     IEnumerator CoyoteTime()
     {
         yield return new WaitForSeconds(0.15f);
         _isGrounded = false;
+    }
+    
+    
+    public void DisableInput()
+    {
+        _playerInput.enabled = false;
     }
 }

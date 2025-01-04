@@ -9,13 +9,13 @@ public class ItemManager : MonoBehaviour
     
     [SerializeField] private UnityEvent allItemsPickedUp;
     [SerializeField] private GameObject diamondCounter;
-    private int diamondStartCount;
-
+    private int _diamondPickedUp;
+    
     private List<Item> _itemsToPick = new List<Item>();
     void Start()
     {
+        _diamondPickedUp = 0;
         LoadItems();
-        diamondStartCount = _itemsToPick.Count;
     }
     public void LoadItems()
     {
@@ -34,8 +34,9 @@ public class ItemManager : MonoBehaviour
         Debug.Log("Removing item");
         itemToRemove.OnPicked -= RemoveItem;
         _itemsToPick.Remove(itemToRemove);
+        _diamondPickedUp++;
         
-        diamondCounter.GetComponent<Text>().text = "X " + (diamondStartCount - _itemsToPick.Count);
+        diamondCounter.GetComponent<Text>().text = "X " + _diamondPickedUp;
         
         if (_itemsToPick.Count == 0)
         {
