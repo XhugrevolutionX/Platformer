@@ -20,7 +20,7 @@ public class ItemManager : MonoBehaviour
         _cherriesPickedUp = 0;
         LoadItems();
     }
-    public void LoadItems()
+    private void LoadItems()
     {
         Item[] itemsArray = GetComponentsInChildren<Item>();
 
@@ -57,13 +57,13 @@ public class ItemManager : MonoBehaviour
         {
             _diamondsToPick.Remove(itemToRemove);
             _diamondsPickedUp++;
-            diamondsCounter.GetComponent<Text>().text = "X " + _diamondsPickedUp;
+            diamondsCounter.GetComponent<Text>().text = " X " + _diamondsPickedUp;
         }
         else if (itemToRemove.CompareTag("Cherry"))
         {
             _cherriesToPick.Remove(itemToRemove);
             _cherriesPickedUp++;
-            cherriesCounter.GetComponent<Text>().text = "X " + _cherriesPickedUp;
+            cherriesCounter.GetComponent<Text>().text = " X " + _cherriesPickedUp;
         }
         
         if (_diamondsToPick.Count == 0)
