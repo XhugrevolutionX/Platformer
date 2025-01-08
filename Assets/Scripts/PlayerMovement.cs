@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -40,8 +41,8 @@ public class PlayerMovement : MonoBehaviour
         }
         
         //animations
-        animator.SetBool("Is_idle", _isGrounded && _rigidbody.linearVelocityX == 0);
-        animator.SetBool("Is_running", _isGrounded && _rigidbody.linearVelocityX != 0);
+        animator.SetBool("Is_idle", _isGrounded && Mathf.Abs(_rigidbody.linearVelocityX) <= Mathf.Epsilon);
+        animator.SetBool("Is_running", _isGrounded && Mathf.Abs(_rigidbody.linearVelocityX) > Mathf.Epsilon);
         animator.SetBool("Is_jumping", !_isGrounded && _rigidbody.linearVelocityY > 0);
         animator.SetBool("Is_falling", !_isGrounded && _rigidbody.linearVelocityY < 0);
     }
@@ -67,6 +68,16 @@ public class PlayerMovement : MonoBehaviour
             _rigidbody.AddForce(transform.right * (moveForce * _horizontalInput), ForceMode2D.Force);
         }
 
+        if (Mathf.Abs(_rigidbody.linearVelocityX) <= 0.0005)
+        {
+            _rigidbody.linearVelocityX = 0;
+        }
+        if (Mathf.Abs(_rigidbody.linearVelocityY) <= 0.0005)
+        {
+            _rigidbody.linearVelocityY = 0;
+        }
+
+        
     }
 
     // //Old Input 

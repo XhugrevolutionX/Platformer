@@ -8,27 +8,26 @@ public class FallingPlatform : MonoBehaviour
     [SerializeField] private Animator animator;
     private Coroutine _fallingPlatformCoroutine;
     public bool is_dead;
+    private Rigidbody2D body;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         animator.SetBool("Is_falling", false);
         is_dead = false;
+        body = GetComponent<Rigidbody2D>();
+        body.bodyType = RigidbodyType2D.Static;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (animator.GetBool("Is_falling"))
-        {
-            transform.localPosition += Vector3.down * (Time.deltaTime * 5f);
-        }
     }
 
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !animator.GetBool("Is_falling"))
         {
             if (_fallingPlatformCoroutine != null)
             {
@@ -40,17 +39,19 @@ public class FallingPlatform : MonoBehaviour
     
     void OnCollisionEnter2D(Collision2D other)
     {
+        Debug.Log(other.gameObject.name);
         if(animator.GetBool("Is_falling") && !other.gameObject.CompareTag("Player"))
         {
-            Destroy(gameObject);
-            //is_dead = true;
-            //animator.SetBool("Is_falling", false);
+            is_dead = true;
+            animator.SetBool("Is_falling", false);
         }
     }
 
     IEnumerator WaitTime()
     {
         yield return new WaitForSeconds(1f);
+        body.bodyType = RigidbodyType2D.Dynamic;
+        body.constraints = body.constraints ^ RigidbodyConstraints2D.FreezePositionY;
         animator.SetBool("Is_falling", true);
     }
     

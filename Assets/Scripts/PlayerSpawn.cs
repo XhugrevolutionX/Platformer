@@ -5,6 +5,7 @@ using Vector3 = UnityEngine.Vector3;
 
 public class PlayerSpawn : MonoBehaviour
 {
+    
     private Vector3 _spawnPosition;
     
     public Vector3 SpawnPosition => _spawnPosition;

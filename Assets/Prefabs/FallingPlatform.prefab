@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7543366326710872107}
   - component: {fileID: 918559210752128573}
   - component: {fileID: 6190777725474212588}
-  - component: {fileID: 9045376058892933834}
+  - component: {fileID: 1495652577755597450}
   m_Layer: 0
   m_Name: FallingPlatform
   m_TagString: Ground
@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7727273156933431731}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -96.72, y: 0.17, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
@@ -150,7 +150,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Size: {x: 1, y: 0.15760648}
-  m_EdgeRadius: 0
+  m_EdgeRadius: 0.02
 --- !u!212 &918559210752128573
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -220,7 +220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 280178037243227542}
   is_dead: 0
---- !u!50 &9045376058892933834
+--- !u!50 &1495652577755597450
 Rigidbody2D:
   serializedVersion: 5
   m_ObjectHideFlags: 0
@@ -235,7 +235,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 0
+  m_GravityScale: 2
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2

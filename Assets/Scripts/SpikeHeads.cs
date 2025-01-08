@@ -34,7 +34,7 @@ public class SpikeHeadAnimation : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && transform.localPosition == originalPosition)
         {
             animator.SetBool("Is_rushing", true);
         }
