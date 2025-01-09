@@ -15,4 +15,9 @@ public class Game : MonoBehaviour
         SceneManager.LoadScene(0);
         Canvas.ForceUpdateCanvases();
     }
+    
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
 }
