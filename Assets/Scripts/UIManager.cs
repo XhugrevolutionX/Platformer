@@ -2,19 +2,35 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private GameObject _goodGameText;
+    [SerializeField] private GameObject goodGameText;
+    [SerializeField] private GameObject badGameText;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start() => HideGoodGame(); 
+    void Start()
+    {
+        HideGoodGame();
+        HideBadGame();
+    } 
     
     public void HideGoodGame()
     {
-        _goodGameText.SetActive(false);
+        goodGameText.SetActive(false);
     }
 
     public void ShowGoodGame()
     {
         Time.timeScale = 0f;
-        _goodGameText.SetActive(true);
+        goodGameText.SetActive(true);
+    }
+    
+    public void HideBadGame()
+    {
+        badGameText.SetActive(false);
+    }
+
+    public void ShowBadGame()
+    {
+        Time.timeScale = 0f;
+        badGameText.SetActive(true);
     }
 }

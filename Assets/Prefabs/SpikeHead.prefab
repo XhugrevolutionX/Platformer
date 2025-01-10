@@ -15,10 +15,9 @@ GameObject:
   - component: {fileID: 559771391415878163}
   - component: {fileID: 696837125302614441}
   - component: {fileID: 4988092930844005177}
-  - component: {fileID: 7325714403210046786}
   m_Layer: 0
   m_Name: SpikeHead
-  m_TagString: Untagged
+  m_TagString: DeathZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -247,15 +246,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 1064220629148867934}
---- !u!114 &7325714403210046786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2666447077390298501}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf19d1cbee2f5f34d8d826d50928621f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

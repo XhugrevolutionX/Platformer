@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 4372800712729010113}
   - component: {fileID: 5054495544129565454}
   - component: {fileID: 2608173116266554225}
-  - component: {fileID: 353410108331911247}
   m_Layer: 0
   m_Name: Saw
   m_TagString: DeathZone
@@ -87,12 +86,12 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
+  m_Radius: 0.425
 --- !u!212 &2608173116266554225
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -148,15 +147,3 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &353410108331911247
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6395829992658009678}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56d3921392347bf45bb3500aba911708, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

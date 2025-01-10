@@ -1,17 +1,17 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
-
-    // void Start()
-    // {
-    // }
-    
-    public void RestartGame()
+    private void Awake()
     {
         Time.timeScale = 1f;
+    }
+
+    public void RestartGame()
+    {
         SceneManager.LoadScene(0);
         Canvas.ForceUpdateCanvases();
     }

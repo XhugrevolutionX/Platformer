@@ -160,13 +160,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // public void OnShootEvent(InputAction.CallbackContext context)
-    // {
-    //     Debug.Log("Event OnShoot");
-    //     return;
-    // }
-
-
     //Grounded Trigger
     public void OnTriggerStay2D(Collider2D other)
     {
