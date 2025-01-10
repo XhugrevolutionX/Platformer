@@ -18872,6 +18872,7 @@ Transform:
   - {fileID: 1485244716}
   - {fileID: 579702636}
   - {fileID: 873431707}
+  - {fileID: 6300745034110963867}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1188808334
@@ -22060,11 +22061,11 @@ Transform:
   m_GameObject: {fileID: 3782121679523874450}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 140, y: -3.57, z: 0}
+  m_LocalPosition: {x: 140, y: -2.3199997, z: 10}
   m_LocalScale: {x: 4, y: 4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1188556508}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &6741689973922649445
 BoxCollider2D:
@@ -22161,4 +22162,3 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1188556508}
-  - {fileID: 6300745034110963867}
