@@ -25,25 +25,37 @@ public class HealthManager : MonoBehaviour
         {
             case 0:
                 _hearts[0].sprite = spriteEmptyHeart;
+                _hearts[1].sprite = spriteEmptyHeart;
+                _hearts[2].sprite = spriteEmptyHeart;
                 break;
             case 1:
                 _hearts[0].sprite = spriteHalfHeart;
+                _hearts[1].sprite = spriteEmptyHeart;
+                _hearts[2].sprite = spriteEmptyHeart;
                 break;
             case 2:
                 _hearts[0].sprite = spriteFullHeart;
                 _hearts[1].sprite = spriteEmptyHeart;
+                _hearts[2].sprite = spriteEmptyHeart;
                 break;
             case 3:
+                _hearts[0].sprite = spriteFullHeart;
                 _hearts[1].sprite = spriteHalfHeart;
+                _hearts[2].sprite = spriteEmptyHeart;
                 break;
             case 4:
+                _hearts[0].sprite = spriteFullHeart;
                 _hearts[1].sprite = spriteFullHeart;
                 _hearts[2].sprite = spriteEmptyHeart;
                 break;
             case 5:
+                _hearts[0].sprite = spriteFullHeart;
+                _hearts[1].sprite = spriteFullHeart;
                 _hearts[2].sprite = spriteHalfHeart;
                 break;
             case 6:
+                _hearts[0].sprite = spriteFullHeart;
+                _hearts[1].sprite = spriteFullHeart;
                 _hearts[2].sprite = spriteFullHeart;
                 break;
         }

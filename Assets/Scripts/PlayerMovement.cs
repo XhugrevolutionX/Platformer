@@ -33,11 +33,11 @@ public class PlayerMovement : MonoBehaviour
         //Flip the sprite the way it moves
         if (_horizontalInput > 0)
         {
-            transform.localScale = new Vector3(1, 1, 1);
+            transform.localScale = new Vector3(1.5f, 1.5f, 1);
         }
         else if (_horizontalInput < 0)
         {
-            transform.localScale = new Vector3(-1, 1, 1);
+            transform.localScale = new Vector3(-1.5f, 1.5f, 1);
         }
         
         //animations

@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class ItemManager : MonoBehaviour
 {
     
-    [SerializeField] private UnityEvent allDiamondsPickedUp;
     [SerializeField] private GameObject diamondsCounter;
     [SerializeField] private GameObject cherriesCounter;
     private int _diamondsPickedUp;
@@ -64,11 +63,6 @@ public class ItemManager : MonoBehaviour
             _cherriesToPick.Remove(itemToRemove);
             _cherriesPickedUp++;
             cherriesCounter.GetComponent<Text>().text = " X " + _cherriesPickedUp;
-        }
-        
-        if (_diamondsToPick.Count == 0)
-        {
-            allDiamondsPickedUp?.Invoke();
         }
     }
 }
