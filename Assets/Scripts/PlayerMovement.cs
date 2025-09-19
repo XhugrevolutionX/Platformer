@@ -24,6 +24,10 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.LogWarning("No rigidbody attached");
         }
+        if (_playerInput == null)
+        {
+            Debug.LogWarning("No player input component");
+        }
         
         animator.SetBool("Is_idle", true);
     }
@@ -33,11 +37,11 @@ public class PlayerMovement : MonoBehaviour
         //Flip the sprite the way it moves
         if (_horizontalInput > 0)
         {
-            transform.localScale = new Vector3(1.5f, 1.5f, 1);
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), Mathf.Abs(transform.localScale.y), 1);
         }
         else if (_horizontalInput < 0)
         {
-            transform.localScale = new Vector3(-1.5f, 1.5f, 1);
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * -1, Mathf.Abs(transform.localScale.y) * -1, 1);
         }
         
         //animations
@@ -67,7 +71,8 @@ public class PlayerMovement : MonoBehaviour
             //Left - Right Movement
             _rigidbody.AddForce(transform.right * (moveForce * _horizontalInput), ForceMode2D.Force);
         }
-
+        
+        //Clamp speed to 0
         if (Mathf.Abs(_rigidbody.linearVelocityX) <= 0.0005)
         {
             _rigidbody.linearVelocityX = 0;
@@ -148,7 +153,6 @@ public class PlayerMovement : MonoBehaviour
                 _jumpInput = true;
             }
         }
-
         if (context.canceled)
         {
             Debug.Log("Event OnJumpRelease");
