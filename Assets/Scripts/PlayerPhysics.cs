@@ -146,7 +146,7 @@ public class PlayerPhysics : MonoBehaviour
         {
             _rigidbody.gravityScale = _baseGravityScale;
         }
-            
+        
 
         // Clamp tiny movement values to 0
         if (Mathf.Abs(_rigidbody.linearVelocity.x) <= 0.0005f)
