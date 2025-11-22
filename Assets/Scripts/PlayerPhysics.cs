@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Cinemachine;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -28,22 +29,34 @@ public class PlayerPhysics : MonoBehaviour
     [SerializeField] private float currentSpeed;
     [SerializeField] private float currentJumpVelocity;
     [SerializeField] private bool isGrounded;
-
-    private float _horizontalInput;
-    private bool _jumpInput;
-    private bool _rollInput;
-    private bool _wasGrounded;
+    
+    [Header("Camera")]
+    [SerializeField] private CinemachineCamera camera;
+    [SerializeField] float camOffset = 5;
+    [SerializeField] float camOffsetAccel = 0.1f;
+    
+    private CinemachinePositionComposer _positionComposer;
     private Coroutine _coyoteTime;
     private Rigidbody2D _rigidbody;
     private PlayerInput _playerInput;
+    
+    //Inputs
+    private float _horizontalInput;
+    private bool _jumpInput;
+    private bool _rollInput;
 
     // movement smoothing
     private float velXSmooth;
+    
+    // camera smoothing
+    private float camXSmooth;
+    float _targetOffset = 0;
 
     // derived jump values
     private float _gravity;
     private float _baseGravityScale;
     private float _jumpVelocity;
+    private bool _wasGrounded;
 
     // Position of the ground check (pivot is already at feet)
     private Vector2 GroundCheckPosition => (Vector2)transform.position;
@@ -52,6 +65,7 @@ public class PlayerPhysics : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _playerInput = GetComponent<PlayerInput>();
+        _positionComposer = camera.GetComponent<CinemachinePositionComposer>();
 
         if (_rigidbody == null)
             Debug.LogWarning("No Rigidbody2D component attached");
@@ -81,6 +95,10 @@ public class PlayerPhysics : MonoBehaviour
         animator.SetBool("Is_jumping", !isGrounded && _rigidbody.linearVelocity.y > 0);
         animator.SetBool("Is_falling", !isGrounded && _rigidbody.linearVelocity.y < 0);
 
+        //Handle Camera Offset
+        float offsetX = Mathf.SmoothDamp(_positionComposer.TargetOffset.x, _targetOffset, ref camXSmooth, camOffsetAccel);
+        _positionComposer.TargetOffset = new Vector3(offsetX, _positionComposer.TargetOffset.y, _positionComposer.TargetOffset.z);
+        
         //For debugging
         currentSpeed = Mathf.Abs(_rigidbody.linearVelocity.x);
     }
@@ -168,6 +186,19 @@ public class PlayerPhysics : MonoBehaviour
     {
         float val = context.ReadValue<float>();
         _horizontalInput = (val > 0) ? 1 : (val < 0 ? -1 : 0);
+        
+        if (_horizontalInput > 0)
+        {
+            _targetOffset = camOffset;
+        }
+        else if (_horizontalInput < 0)
+        {
+            _targetOffset = -camOffset;
+        }
+        else
+        {
+            _targetOffset = 0;
+        }
     }
 
     public void OnJumpEvent(InputAction.CallbackContext context)
