@@ -32,7 +32,8 @@ public class PlayerPhysics : MonoBehaviour
     
     [Header("Camera")]
     [SerializeField] private CinemachineCamera camera;
-    [SerializeField] float camOffset = 5;
+    [SerializeField] float camOffsetX = 5;
+    [SerializeField] float camOffsetY = 5;
     [SerializeField] float camOffsetAccel = 0.1f;
     
     private CinemachinePositionComposer _positionComposer;
@@ -50,7 +51,9 @@ public class PlayerPhysics : MonoBehaviour
     
     // camera smoothing
     private float camXSmooth;
-    float _targetOffset = 0;
+    private float camYSmooth;
+    float _targetOffsetX = 0;
+    float _targetOffsetY = 0;
 
     // derived jump values
     private float _gravity;
@@ -96,8 +99,9 @@ public class PlayerPhysics : MonoBehaviour
         animator.SetBool("Is_falling", !isGrounded && _rigidbody.linearVelocity.y < 0);
 
         //Handle Camera Offset
-        float offsetX = Mathf.SmoothDamp(_positionComposer.TargetOffset.x, _targetOffset, ref camXSmooth, camOffsetAccel);
-        _positionComposer.TargetOffset = new Vector3(offsetX, _positionComposer.TargetOffset.y, _positionComposer.TargetOffset.z);
+        float offsetX = Mathf.SmoothDamp(_positionComposer.TargetOffset.x, _targetOffsetX, ref camXSmooth, camOffsetAccel);
+        float offsetY = Mathf.SmoothDamp(_positionComposer.TargetOffset.y, _targetOffsetY, ref camYSmooth, camOffsetAccel);
+        _positionComposer.TargetOffset = new Vector3(offsetX, offsetY, _positionComposer.TargetOffset.z);
         
         //For debugging
         currentSpeed = Mathf.Abs(_rigidbody.linearVelocity.x);
@@ -153,15 +157,18 @@ public class PlayerPhysics : MonoBehaviour
         {
             if (_rigidbody.linearVelocity.y > terminalSpeed)
             {
+                _targetOffsetY = 0;
                 _rigidbody.gravityScale *= gravityMultiplier;
             }
             else
             {
+                _targetOffsetY = -camOffsetY;
                 _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, terminalSpeed);
             }
         }
         if (isGrounded) 
         {
+            _targetOffsetY = 0;
             _rigidbody.gravityScale = _baseGravityScale;
         }
         
@@ -189,15 +196,15 @@ public class PlayerPhysics : MonoBehaviour
         
         if (_horizontalInput > 0)
         {
-            _targetOffset = camOffset;
+            _targetOffsetX = camOffsetX;
         }
         else if (_horizontalInput < 0)
         {
-            _targetOffset = -camOffset;
+            _targetOffsetX = -camOffsetX;
         }
         else
         {
-            _targetOffset = 0;
+            _targetOffsetX = 0;
         }
     }
 

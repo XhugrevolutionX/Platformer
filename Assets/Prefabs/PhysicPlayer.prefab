@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6625282775247743063}
   - component: {fileID: 4003825122711958867}
   - component: {fileID: 856241998933929177}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PhysicPlayer
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -33,7 +33,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -101.5, y: -6.0899997, z: 0}
   m_LocalScale: {x: 2.5, y: 2.5, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -145,7 +145,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 6200000, guid: 744d4197aa63d0b42b2f5515ddf85de8, type: 2}
+  m_Material: {fileID: 6200000, guid: 8a73b16bbdb782b49b868d16d40cbe57, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -257,11 +257,14 @@ MonoBehaviour:
   animator: {fileID: 856241998933929177}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   groundCheckSize: {x: 0.5, y: 0.1}
   currentSpeed: 0
   currentJumpVelocity: 0
   isGrounded: 0
+  camera: {fileID: 0}
+  camOffset: 5
+  camOffsetAccel: 0.5
 --- !u!95 &856241998933929177
 Animator:
   serializedVersion: 7
