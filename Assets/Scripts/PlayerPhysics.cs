@@ -10,17 +10,17 @@ public class PlayerPhysics : MonoBehaviour
     [SerializeField] private float maxSpeed = 8f;
     [SerializeField] private float accelTime = 0.2f;
     [SerializeField] private float decelTime = 0.3f;
-  
+    
     [Header("Jump Settings")] 
     [SerializeField] private float jumpHeight = 3f;
     [SerializeField] private float timeToApex = 0.4f;
     [SerializeField] private float variableHeightRatio = 0.5f;
     [SerializeField] private float gravityMultiplier = 2.5f;
     [SerializeField] private float terminalSpeed = -5f;
-    
+
     [Header("References")] 
     [SerializeField] private Animator animator;
-
+    
     [Header("Ground Detection")]
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Vector2 groundCheckSize = new Vector2(0.5f, 0.1f);
@@ -38,8 +38,10 @@ public class PlayerPhysics : MonoBehaviour
     
     private CinemachinePositionComposer _positionComposer;
     private Coroutine _coyoteTime;
+    private Coroutine _safePosTime;
     private Rigidbody2D _rigidbody;
     private PlayerInput _playerInput;
+    private PlayerDamage _playerDamage;
     
     //Inputs
     private float _horizontalInput;
@@ -68,6 +70,7 @@ public class PlayerPhysics : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _playerInput = GetComponent<PlayerInput>();
+        _playerDamage = GetComponent<PlayerDamage>();
         _positionComposer = camera.GetComponent<CinemachinePositionComposer>();
 
         if (_rigidbody == null)
@@ -105,6 +108,22 @@ public class PlayerPhysics : MonoBehaviour
         
         //For debugging
         currentSpeed = Mathf.Abs(_rigidbody.linearVelocity.x);
+
+        if (isGrounded)
+        {
+            if (_safePosTime == null)
+            {
+                _safePosTime = StartCoroutine(SafePosTime());
+            }
+        }
+        else
+        {
+            if (_safePosTime != null)
+            {
+                StopCoroutine(_safePosTime);
+                _safePosTime = null;
+            }
+        }
     }
 
     void FixedUpdate()
@@ -119,6 +138,7 @@ public class PlayerPhysics : MonoBehaviour
             {
                 StopCoroutine(_coyoteTime);
             }
+            
             isGrounded = true;
         }
         else
@@ -242,6 +262,16 @@ public class PlayerPhysics : MonoBehaviour
         isGrounded = false;
     }
 
+    IEnumerator SafePosTime()
+    {
+        yield return new WaitForSeconds(0.75f);
+        if (isGrounded)
+        {
+            _playerDamage.UpdateLastSafePos(transform.position);
+        }
+        _safePosTime = null;
+    }
+    
     public void DisableInput()
     {
         _playerInput.enabled = false;
