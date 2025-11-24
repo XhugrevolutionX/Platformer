@@ -24,11 +24,19 @@ public class PlayerPhysics : MonoBehaviour
     [Header("Ground Detection")]
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Vector2 groundCheckSize = new Vector2(0.5f, 0.1f);
+    
+    [Header("Wall Detection")]
+    [SerializeField] private Transform leftWallCheck;
+    [SerializeField] private Transform rightWallCheck;
+    [SerializeField] private LayerMask wallLayer;
+    [SerializeField] private Vector2 wallCheckSize = new Vector2(0.1f, 0.5f);
 
     [Header("Debug")]
     [SerializeField] private float currentSpeed;
     [SerializeField] private float currentJumpVelocity;
     [SerializeField] private bool isGrounded;
+    [SerializeField] private bool isNearLeftWall;
+    [SerializeField] private bool isNearRightWall;
     
     [Header("Camera")]
     [SerializeField] private CinemachineCamera camera;
@@ -65,6 +73,8 @@ public class PlayerPhysics : MonoBehaviour
 
     // Position of the ground check (pivot is already at feet)
     private Vector2 GroundCheckPosition => (Vector2)transform.position;
+    private Vector2 RightWallCheckPosition ;
+    private Vector2 LeftWallCheckPosition;
 
     void Awake()
     {
@@ -80,6 +90,9 @@ public class PlayerPhysics : MonoBehaviour
             Debug.LogWarning("No PlayerInput component attached");
         
         animator.SetBool("Is_idle", true);
+        
+        RightWallCheckPosition = rightWallCheck.position;
+        LeftWallCheckPosition = leftWallCheck.position;
 
         // Disable built-in damping (handled by code)
         _rigidbody.linearDamping = 0f;
@@ -91,9 +104,19 @@ public class PlayerPhysics : MonoBehaviour
     {
         //Flip sprite Left and Right depending on where the character is going
         if (_horizontalInput > 0)
+        {
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            RightWallCheckPosition = rightWallCheck.position;
+            LeftWallCheckPosition = leftWallCheck.position;
+
+        }
         else if (_horizontalInput < 0)
+        {
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * -1, transform.localScale.y, transform.localScale.z);
+            RightWallCheckPosition = leftWallCheck.position;
+            LeftWallCheckPosition = rightWallCheck.position;
+
+        }
 
         //Handle animations depending on the character velocity
         animator.SetBool("Is_idle", isGrounded && Mathf.Abs(_rigidbody.linearVelocity.x) <= Mathf.Epsilon);
@@ -130,6 +153,22 @@ public class PlayerPhysics : MonoBehaviour
     {
         // Check if grounded using OverlapBox at the pivot (feet)
         bool currentlyGrounded = Physics2D.OverlapBox(GroundCheckPosition, groundCheckSize, 0f, groundLayer);
+        // Check if near wall using OverlapBox
+        bool currentlyNearRightWall = Physics2D.OverlapBox(RightWallCheckPosition, wallCheckSize, 0f, wallLayer);
+        bool currentlyNearLeftWall = Physics2D.OverlapBox(LeftWallCheckPosition, wallCheckSize, 0f, wallLayer);
+        
+        //Handle wall jump
+        if (!currentlyGrounded)
+        {
+            isNearLeftWall = currentlyNearLeftWall;
+            isNearRightWall = currentlyNearRightWall;
+
+            if (isNearLeftWall && isNearRightWall)
+            {
+                isNearLeftWall = false;
+                isNearRightWall = false;
+            }
+        }
 
         // Handle coyote time
         if (currentlyGrounded)
@@ -140,6 +179,8 @@ public class PlayerPhysics : MonoBehaviour
             }
             
             isGrounded = true;
+            isNearLeftWall = false;
+            isNearRightWall = false;
         }
         else
         {
@@ -168,6 +209,21 @@ public class PlayerPhysics : MonoBehaviour
                 _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, _jumpVelocity);
                 isGrounded = false;
             }
+            else 
+            {
+                if (isNearLeftWall)
+                {
+                    _rigidbody.linearVelocity = new Vector2(_jumpVelocity, _jumpVelocity * 1.5f);
+                    isNearLeftWall = false;
+                }
+
+                if (isNearRightWall)
+                {
+                    _rigidbody.linearVelocity = new Vector2(-_jumpVelocity, _jumpVelocity * 1.5f);
+                    isNearRightWall = false;
+                }
+            }
+            
 
             _jumpInput = false;
         }
@@ -230,9 +286,12 @@ public class PlayerPhysics : MonoBehaviour
 
     public void OnJumpEvent(InputAction.CallbackContext context)
     {
-        if (context.started && isGrounded)
+        if (context.started)
         {
-            _jumpInput = true;
+            if (isGrounded || isNearLeftWall || isNearRightWall)
+            {
+                _jumpInput = true;
+            }
         }
 
         //Variable jump height
@@ -281,5 +340,7 @@ public class PlayerPhysics : MonoBehaviour
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(GroundCheckPosition, groundCheckSize);
+        Gizmos.DrawWireCube(RightWallCheckPosition, wallCheckSize);
+        Gizmos.DrawWireCube(LeftWallCheckPosition, wallCheckSize);
     }
 }
