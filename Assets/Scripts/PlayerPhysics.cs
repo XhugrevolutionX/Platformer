@@ -1,105 +1,139 @@
 using System.Collections;
 using Unity.Cinemachine;
-using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerPhysics : MonoBehaviour
 {
-    [Header("Movement Settings")] 
-    [SerializeField] private float maxSpeed = 8f;
-    [SerializeField] private float accelTime = 0.2f;
-    [SerializeField] private float decelTime = 0.3f;
+    private static readonly int AnimIdleId = Animator.StringToHash("Is_idle");
+    private static readonly int AnimRunningId = Animator.StringToHash("Is_running");
+    private static readonly int AnimJumpingId = Animator.StringToHash("Is_jumping");
+    private static readonly int AnimFallingId = Animator.StringToHash("Is_falling");
+    
+    [Header("Layers References")]
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField]private LayerMask wallLayer;
+    
+    [Header("Objects References")]
+    [SerializeField] private new CinemachineCamera camera;
+    [SerializeField] private Transform leftWallCheck;
+    [SerializeField] private Transform rightWallCheck;
+    
+    [Header("Abilities")] 
+    [SerializeField] private bool canRun = true;
+    [SerializeField] private bool canWallJump = true;
+    
+    [Header("Walk Settings")] 
+    [SerializeField] private float maxWalkSpeed = 8f;
+    [SerializeField] private float walkAccelerationTime = 0.25f;
+    [SerializeField] private float walkDecelerationTime = 0.15f;
+    
+    [Header("Run Settings")] 
+    [SerializeField] private float maxRunSpeed = 12f;
+    [SerializeField] private float runAccelerationTime = 0.2f;
+    [SerializeField] private float runDecelerationTime = 0.2f;
+    [SerializeField] private float timeBeforeRunning = 0.3f;
     
     [Header("Jump Settings")] 
     [SerializeField] private float jumpHeight = 3f;
     [SerializeField] private float timeToApex = 0.4f;
     [SerializeField] private float variableHeightRatio = 0.5f;
+    
+    [Header("Falling Settings")] 
     [SerializeField] private float gravityMultiplier = 2.5f;
     [SerializeField] private float terminalSpeed = -5f;
-
+    [SerializeField] private float coyoteTimeWindow = 0.15f;
+    
     [Header("WallJump Settings")] 
-    [SerializeField] private float wallJumpMultiplierY = 1.2f;
     [SerializeField] private float wallJumpMultiplierX = 1f;
-
-    [Header("References")] 
-    [SerializeField] private Animator animator;
+    [SerializeField] private float wallJumpMultiplierY = 1.2f;
     
     [Header("Ground Detection")]
-    [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Vector2 groundCheckSize = new Vector2(0.5f, 0.1f);
+    [SerializeField] private float safePosUpdateTime = 0.75f;
     
     [Header("Wall Detection")]
-    [SerializeField] private Transform leftWallCheck;
-    [SerializeField] private Transform rightWallCheck;
-    [SerializeField] private LayerMask wallLayer;
     [SerializeField] private Vector2 wallCheckSize = new Vector2(0.1f, 0.5f);
-
     
-    [Header("Camera")]
-    [SerializeField] private CinemachineCamera camera;
+    [Header("Camera Settings")]
     [SerializeField] float camOffsetX = 5;
     [SerializeField] float camOffsetY = 5;
     [SerializeField] float camOffsetAccel = 0.1f;
     
-    [Header("Debug")]
-    [SerializeField] private Vector2 currentSpeed;
-    [SerializeField] private float currentJumpVelocity;
+    [Header("Debug Values")]
+    [SerializeField] public float currentJumpVelocity;
+    [SerializeField] public Vector2 currentSpeed;
     [SerializeField] private bool isGrounded;
     [SerializeField] private bool isOnPlatform;
     [SerializeField] private bool isNearLeftWall;
     [SerializeField] private bool isNearRightWall;
+    [SerializeField] private bool isRunning;
 
-    
+    //References
     private CinemachinePositionComposer _positionComposer;
-    private Coroutine _coyoteTime;
-    private Coroutine _safePosTime;
+    private Animator _animator;
     private Rigidbody2D _rigidbody;
     private PlayerInput _playerInput;
     private PlayerDamage _playerDamage;
+    
+    //Coroutines
+    private Coroutine _coyoteCoroutine;
+    private Coroutine _safePosCoroutine;
     
     //Inputs
     private float _horizontalInput;
     private bool _jumpInput;
     private bool _rollInput;
 
-    // movement smoothing
-    private float velXSmooth;
+    //Movement smoothing
+    private float _velXSmooth;
+    private float _velX;
     
-    // camera smoothing
-    private float camXSmooth;
-    private float camYSmooth;
-    float _targetOffsetX = 0;
-    float _targetOffsetY = 0;
+    //Camera smoothing
+    private float _camXSmooth;
+    private float _camYSmooth;
+    float _targetOffsetX;
+    float _targetOffsetY;
 
-    // derived jump values
+    //Derived jump values
     private float _gravity;
     private float _baseGravityScale;
     private float _jumpVelocity;
     private bool _wasGrounded;
 
-    // Position of the ground check (pivot is already at feet)
-    private Vector2 GroundCheckPosition => (Vector2)transform.position;
-    private Vector2 RightWallCheckPosition ;
-    private Vector2 LeftWallCheckPosition;
+    //Position of the ground and wall checks
+    private Vector2 GroundCheckPosition => transform.position;
+    private Vector2 _rightWallCheckPosition;
+    private Vector2 _leftWallCheckPosition;
 
     void Awake()
     {
+        //Get Components
         _rigidbody = GetComponent<Rigidbody2D>();
-        _playerInput = GetComponent<PlayerInput>();
-        _playerDamage = GetComponent<PlayerDamage>();
-        _positionComposer = camera.GetComponent<CinemachinePositionComposer>();
-
         if (_rigidbody == null)
             Debug.LogWarning("No Rigidbody2D component attached");
 
+        _playerInput = GetComponent<PlayerInput>();
         if (_playerInput == null)
             Debug.LogWarning("No PlayerInput component attached");
         
-        animator.SetBool("Is_idle", true);
+        _playerDamage = GetComponent<PlayerDamage>();
+        if (_playerDamage == null)
+            Debug.LogWarning("No PlayerDamage component attached");
         
-        RightWallCheckPosition = rightWallCheck.position;
-        LeftWallCheckPosition = leftWallCheck.position;
+        _animator = GetComponent<Animator>();
+        if (_animator == null)
+            Debug.LogWarning("No Animator component attached");
+        
+        _positionComposer = camera.GetComponent<CinemachinePositionComposer>();
+        if (_positionComposer == null)
+            Debug.LogWarning("No PositionComposer component attached to camera");
+        
+        
+        _animator.SetBool(AnimIdleId, true);
+        
+        _rightWallCheckPosition = rightWallCheck.position;
+        _leftWallCheckPosition = leftWallCheck.position;
 
         // Disable built-in damping (handled by code)
         _rigidbody.linearDamping = 0f;
@@ -113,27 +147,27 @@ public class PlayerPhysics : MonoBehaviour
         if (_horizontalInput > 0)
         {
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-            RightWallCheckPosition = rightWallCheck.position;
-            LeftWallCheckPosition = leftWallCheck.position;
+            _rightWallCheckPosition = rightWallCheck.position;
+            _leftWallCheckPosition = leftWallCheck.position;
 
         }
         else if (_horizontalInput < 0)
         {
             transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * -1, transform.localScale.y, transform.localScale.z);
-            RightWallCheckPosition = leftWallCheck.position;
-            LeftWallCheckPosition = rightWallCheck.position;
+            _rightWallCheckPosition = leftWallCheck.position;
+            _leftWallCheckPosition = rightWallCheck.position;
 
         }
 
         //Handle animations depending on the character velocity
-        animator.SetBool("Is_idle", isGrounded && Mathf.Abs(_rigidbody.linearVelocity.x) <= Mathf.Epsilon);
-        animator.SetBool("Is_running", isGrounded && Mathf.Abs(_rigidbody.linearVelocity.x) > Mathf.Epsilon);
-        animator.SetBool("Is_jumping", !isGrounded && _rigidbody.linearVelocity.y > 0);
-        animator.SetBool("Is_falling", !isGrounded && _rigidbody.linearVelocity.y < 0);
+        _animator.SetBool(AnimIdleId, isGrounded && Mathf.Abs(_rigidbody.linearVelocity.x) <= Mathf.Epsilon);
+        _animator.SetBool(AnimRunningId, isGrounded && Mathf.Abs(_rigidbody.linearVelocity.x) > Mathf.Epsilon);
+        _animator.SetBool(AnimJumpingId, !isGrounded && _rigidbody.linearVelocity.y > 0);
+        _animator.SetBool(AnimFallingId, !isGrounded && _rigidbody.linearVelocity.y < 0);
 
         //Handle Camera Offset
-        float offsetX = Mathf.SmoothDamp(_positionComposer.TargetOffset.x, _targetOffsetX, ref camXSmooth, camOffsetAccel);
-        float offsetY = Mathf.SmoothDamp(_positionComposer.TargetOffset.y, _targetOffsetY, ref camYSmooth, camOffsetAccel);
+        float offsetX = Mathf.SmoothDamp(_positionComposer.TargetOffset.x, _targetOffsetX, ref _camXSmooth, camOffsetAccel);
+        float offsetY = Mathf.SmoothDamp(_positionComposer.TargetOffset.y, _targetOffsetY, ref _camYSmooth, camOffsetAccel);
         _positionComposer.TargetOffset = new Vector3(offsetX, offsetY, _positionComposer.TargetOffset.z);
         
         //For debugging
@@ -141,66 +175,60 @@ public class PlayerPhysics : MonoBehaviour
 
         if (isGrounded && !isOnPlatform)
         {
-            if (_safePosTime == null)
-            {
-                _safePosTime = StartCoroutine(SafePosTime());
-            }
+            _safePosCoroutine ??= StartCoroutine(SafePosTime());
         }
         else
         {
-            if (_safePosTime != null)
+            if (_safePosCoroutine != null)
             {
-                StopCoroutine(_safePosTime);
-                _safePosTime = null;
+                StopCoroutine(_safePosCoroutine);
+                _safePosCoroutine = null;
             }
         }
     }
 
     void FixedUpdate()
     {
-        // Check if grounded using OverlapBox at the pivot (feet)
+        //Check if grounded using OverlapBox
         Collider2D other = Physics2D.OverlapBox(GroundCheckPosition, groundCheckSize, 0f, groundLayer);
         bool currentlyGrounded = other;
         
         if (currentlyGrounded)
         {
             isGrounded = true;
-            if (other.CompareTag("Platform"))
-            {
-                isOnPlatform = true;
-            }
-            else
-            {
-                isOnPlatform = false;
-            }
+            isOnPlatform = other.CompareTag("Platform");
         }
         else
         {
             isOnPlatform = false;
         }
-        // Check if near wall using OverlapBox
-        bool currentlyNearRightWall = Physics2D.OverlapBox(RightWallCheckPosition, wallCheckSize, 0f, wallLayer);
-        bool currentlyNearLeftWall = Physics2D.OverlapBox(LeftWallCheckPosition, wallCheckSize, 0f, wallLayer);
         
-        //Handle wall jump
-        if (!currentlyGrounded)
+        //Check if near a wall using OverlapBox
+        if (canWallJump)
         {
-            isNearLeftWall = currentlyNearLeftWall;
-            isNearRightWall = currentlyNearRightWall;
-
-            if (isNearLeftWall && isNearRightWall)
+            bool currentlyNearRightWall = Physics2D.OverlapBox(_rightWallCheckPosition, wallCheckSize, 0f, wallLayer);
+            bool currentlyNearLeftWall = Physics2D.OverlapBox(_leftWallCheckPosition, wallCheckSize, 0f, wallLayer);
+            
+            if (!currentlyGrounded)
             {
-                isNearLeftWall = false;
-                isNearRightWall = false;
+                isNearLeftWall = currentlyNearLeftWall;
+                isNearRightWall = currentlyNearRightWall;
+
+                //If stuck between two walls cannot wall jump
+                if (isNearLeftWall && isNearRightWall)
+                {
+                    isNearLeftWall = false;
+                    isNearRightWall = false;
+                }
             }
         }
 
-        // Handle coyote time
+        //Coyote time
         if (currentlyGrounded)
         {
-            if (_coyoteTime != null)
+            if (_coyoteCoroutine != null)
             {
-                StopCoroutine(_coyoteTime);
+                StopCoroutine(_coyoteCoroutine);
             }
             
             isGrounded = true;
@@ -211,20 +239,20 @@ public class PlayerPhysics : MonoBehaviour
         {
             if (_wasGrounded)
             {
-                if (_coyoteTime != null)
+                if (_coyoteCoroutine != null)
                 {
-                    StopCoroutine(_coyoteTime);
+                    StopCoroutine(_coyoteCoroutine);
                 }
-                _coyoteTime = StartCoroutine(CoyoteTime());
+                _coyoteCoroutine = StartCoroutine(CoyoteTime());
             }
         }
         _wasGrounded = currentlyGrounded;
 
         //Horizontal Movement
-        float targetSpeed = _horizontalInput * maxSpeed;
-        float velX = Mathf.SmoothDamp(_rigidbody.linearVelocity.x, targetSpeed, ref velXSmooth, (_horizontalInput != 0) ? accelTime : decelTime);
-
-        _rigidbody.linearVelocity = new Vector2(velX, _rigidbody.linearVelocity.y);
+         float targetSpeed = _horizontalInput * maxWalkSpeed;
+         _velX = Mathf.SmoothDamp(_rigidbody.linearVelocity.x, targetSpeed, ref _velXSmooth, (_horizontalInput != 0) ? walkAccelerationTime : walkDecelerationTime);
+       
+        _rigidbody.linearVelocity = new Vector2(_velX, _rigidbody.linearVelocity.y);
 
         //Jump
         if (_jumpInput)
@@ -234,7 +262,7 @@ public class PlayerPhysics : MonoBehaviour
                 _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, _jumpVelocity);
                 isGrounded = false;
             }
-            else 
+            else if (canWallJump)
             {
                 if (isNearLeftWall)
                 {
@@ -248,8 +276,6 @@ public class PlayerPhysics : MonoBehaviour
                     isNearRightWall = false;
                 }
             }
-            
-
             _jumpInput = false;
         }
         
@@ -274,7 +300,7 @@ public class PlayerPhysics : MonoBehaviour
         }
         
 
-        // Clamp tiny movement values to 0
+        //Clamp tiny movement values to 0
         if (Mathf.Abs(_rigidbody.linearVelocity.x) <= 0.0005f)
             _rigidbody.linearVelocity = new Vector2(0, _rigidbody.linearVelocity.y);
 
@@ -342,18 +368,18 @@ public class PlayerPhysics : MonoBehaviour
 
     IEnumerator CoyoteTime()
     {
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSeconds(coyoteTimeWindow);
         isGrounded = false;
     }
 
     IEnumerator SafePosTime()
     {
-        yield return new WaitForSeconds(0.75f);
+        yield return new WaitForSeconds(safePosUpdateTime);
         if (isGrounded)
         {
             _playerDamage.UpdateLastSafePos(transform.position);
         }
-        _safePosTime = null;
+        _safePosCoroutine = null;
     }
     
     public void DisableInput()
@@ -365,7 +391,7 @@ public class PlayerPhysics : MonoBehaviour
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(GroundCheckPosition, groundCheckSize);
-        Gizmos.DrawWireCube(RightWallCheckPosition, wallCheckSize);
-        Gizmos.DrawWireCube(LeftWallCheckPosition, wallCheckSize);
+        Gizmos.DrawWireCube(_rightWallCheckPosition, wallCheckSize);
+        Gizmos.DrawWireCube(_leftWallCheckPosition, wallCheckSize);
     }
 }
