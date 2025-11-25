@@ -18,6 +18,10 @@ public class PlayerPhysics : MonoBehaviour
     [SerializeField] private float gravityMultiplier = 2.5f;
     [SerializeField] private float terminalSpeed = -5f;
 
+    [Header("WallJump Settings")] 
+    [SerializeField] private float wallJumpMultiplierY = 1.2f;
+    [SerializeField] private float wallJumpMultiplierX = 1f;
+
     [Header("References")] 
     [SerializeField] private Animator animator;
     
@@ -31,18 +35,21 @@ public class PlayerPhysics : MonoBehaviour
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private Vector2 wallCheckSize = new Vector2(0.1f, 0.5f);
 
-    [Header("Debug")]
-    [SerializeField] private float currentSpeed;
-    [SerializeField] private float currentJumpVelocity;
-    [SerializeField] private bool isGrounded;
-    [SerializeField] private bool isNearLeftWall;
-    [SerializeField] private bool isNearRightWall;
     
     [Header("Camera")]
     [SerializeField] private CinemachineCamera camera;
     [SerializeField] float camOffsetX = 5;
     [SerializeField] float camOffsetY = 5;
     [SerializeField] float camOffsetAccel = 0.1f;
+    
+    [Header("Debug")]
+    [SerializeField] private Vector2 currentSpeed;
+    [SerializeField] private float currentJumpVelocity;
+    [SerializeField] private bool isGrounded;
+    [SerializeField] private bool isOnPlatform;
+    [SerializeField] private bool isNearLeftWall;
+    [SerializeField] private bool isNearRightWall;
+
     
     private CinemachinePositionComposer _positionComposer;
     private Coroutine _coyoteTime;
@@ -130,9 +137,9 @@ public class PlayerPhysics : MonoBehaviour
         _positionComposer.TargetOffset = new Vector3(offsetX, offsetY, _positionComposer.TargetOffset.z);
         
         //For debugging
-        currentSpeed = Mathf.Abs(_rigidbody.linearVelocity.x);
+        currentSpeed = new Vector2(_rigidbody.linearVelocity.x,_rigidbody.linearVelocity.y);
 
-        if (isGrounded)
+        if (isGrounded && !isOnPlatform)
         {
             if (_safePosTime == null)
             {
@@ -152,7 +159,25 @@ public class PlayerPhysics : MonoBehaviour
     void FixedUpdate()
     {
         // Check if grounded using OverlapBox at the pivot (feet)
-        bool currentlyGrounded = Physics2D.OverlapBox(GroundCheckPosition, groundCheckSize, 0f, groundLayer);
+        Collider2D other = Physics2D.OverlapBox(GroundCheckPosition, groundCheckSize, 0f, groundLayer);
+        bool currentlyGrounded = other;
+        
+        if (currentlyGrounded)
+        {
+            isGrounded = true;
+            if (other.CompareTag("Platform"))
+            {
+                isOnPlatform = true;
+            }
+            else
+            {
+                isOnPlatform = false;
+            }
+        }
+        else
+        {
+            isOnPlatform = false;
+        }
         // Check if near wall using OverlapBox
         bool currentlyNearRightWall = Physics2D.OverlapBox(RightWallCheckPosition, wallCheckSize, 0f, wallLayer);
         bool currentlyNearLeftWall = Physics2D.OverlapBox(LeftWallCheckPosition, wallCheckSize, 0f, wallLayer);
@@ -213,13 +238,13 @@ public class PlayerPhysics : MonoBehaviour
             {
                 if (isNearLeftWall)
                 {
-                    _rigidbody.linearVelocity = new Vector2(_jumpVelocity, _jumpVelocity * 1.5f);
+                    _rigidbody.linearVelocity = new Vector2(_jumpVelocity * wallJumpMultiplierX, _jumpVelocity * wallJumpMultiplierY);
                     isNearLeftWall = false;
                 }
 
                 if (isNearRightWall)
                 {
-                    _rigidbody.linearVelocity = new Vector2(-_jumpVelocity, _jumpVelocity * 1.5f);
+                    _rigidbody.linearVelocity = new Vector2(-(_jumpVelocity * wallJumpMultiplierX), _jumpVelocity * wallJumpMultiplierY);
                     isNearRightWall = false;
                 }
             }
@@ -242,7 +267,7 @@ public class PlayerPhysics : MonoBehaviour
                 _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, terminalSpeed);
             }
         }
-        if (isGrounded) 
+        if (isGrounded || isNearLeftWall || isNearRightWall) 
         {
             _targetOffsetY = 0;
             _rigidbody.gravityScale = _baseGravityScale;
